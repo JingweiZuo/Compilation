@@ -1,0 +1,4 @@
+#! /bin/bash
+gcc -o evm evm.c
+gcc -o asm asm.c
+gcc -o ast ast.c
