@@ -25,6 +25,10 @@ int currentInst;
 // Q1 : Ecrire le code
 void addCode(int v)
 {
+        if (currentInst<MAX_CODESEGMENT_SIZE)
+                codeSegment[currentInst]=v;
+		currentInst++;
+	//rajouter les codes
 }
 
 // Structure permettant de definir les instructions de l'assembleur
@@ -53,6 +57,7 @@ void addCode(int v)
         addInstructionName("savebp", OP_SAVEBP, 0, "", 0);
         addInstructionName("rstrbp", OP_RSTRBP, 0, "", 0);
         addInstructionName("halt", OP_HALT, 0, "", 0);
+        addInstructionName("skip", OP_SKIP, 0, "", 0);
 */
 // Les instructions suivantes sont de type 1, ce qui signifie
 // que le decodage d'un entier est necessaire. La chaine
@@ -106,6 +111,14 @@ int currentInstructionName;
 // Q2 : Ecrire le code 
 void addInstructionName(char *instname, int opcod, int type, char *format, int nbops)
 {
+        tabInstructionNames[currentInstructionName].name = (char*) malloc (strlen(instname)+1);
+	strcpy(tabInstructionNames[currentInstructionName].name,instname);
+        tabInstructionNames[currentInstructionName].opcod=opcod;
+        tabInstructionNames[currentInstructionName].type=type;
+        tabInstructionNames[currentInstructionName].format = (char*) malloc (strlen(format)+1);
+	strcpy(tabInstructionNames[currentInstructionName].format,format);
+        tabInstructionNames[currentInstructionName].nbops=nbops;
+        currentInstructionName++;
 }
 
 // La structure de donnees suivante permet de manipuler les etiquettes
@@ -132,12 +145,21 @@ int currentLabel;
 // Q3 : Ecrire le code
 int findLabel(char *labelname)
 {
-        return -1;
+        int i;
+
+        for (i=0;i<currentLabel;i++)
+                if (strcmp(labelname,tabLabels[i].label)==0)
+                        return i;
+        return -1;//si label n'est pas dans tabLabels
 }
 
 // Q4 : Ecrire le code
 void addLabel(char *labelname,int addr)
 {
+        tabLabels[currentLabel].label = (char*) malloc (strlen(labelname)+1);
+	strcpy(tabLabels[currentLabel].label,labelname);
+        tabLabels[currentLabel].addr=addr;
+        currentLabel++;
 }
 
 // Structure permettant de manipuler les references dans le code, resolues
@@ -164,11 +186,23 @@ int currentRef;
 // Q5 : Ecrire le code
 void addReference(char *labelname,int addrInCode)
 {
+	
+	tabReferences[currentRef].label = (char*) malloc (strlen(labelname)+1);
+	strcpy(tabReferences[currentRef].label,labelname);
+	tabReferences[currentRef].addrInCode=addrInCode;//23
+	currentRef++;
 }
 
 // Q6 : Ecrire le code
 void resolveReferences()
 {
+        int i,fl;
+
+        for (i=0;i<currentRef;i++)
+        {
+                fl=findLabel(tabReferences[i].label);
+                codeSegment[tabReferences[i].addrInCode]=tabLabels[fl].addr;//un etape qui est le plus important,transferer l'etiquette à l'addresse
+        }
 }
 
 // La fonction decodeInstruction(char *line) est appelee par la boucle
@@ -226,16 +260,40 @@ void decodeInstruction(char *line)
 				// nothing to resolve
 				case 2:
 					// Add code here...
+					found=1;
+					sscanf(line,tabInstructionNames[i].format,dummy,string_operand);
+					addCode(tabInstructionNames[i].opcod);
+					l=strlen(string_operand);
+					for (j=0;j<l;j++)
+						addCode((int)string_operand[j]);//ajouter le string, un lettre chaque ligne
+					addCode(0);
 					break;
 				// one operand, and it's a label
 				// check if there is something to resolve later
 				case 3:
-					// Add code here...
+					found=1;
+					sscanf(line,tabInstructionNames[i].format,dummy,string_label);
+					addCode(tabInstructionNames[i].opcod);
+		                        int fl=findLabel(string_label);
+                        		if (fl!=-1)
+                                		addCode(tabLabels[fl].addr);//ajouter l'address d'etiquete s'il existe dans le tableau d'etiquette
+                        		else{//s'il existe pas
+                                		addReference(string_label,currentInst);//ajouter le reference dans le tableau
+                                		addCode(-1);//marquer -1
+                        		}
 					break;
                                 // one operand, of type string with " for outchar
                                 // nothing to resolve
                                 case 4:
-					// Add code here...
+                                        found=1;
+					for (j=0;line[j]!='"';j++)
+						;//le premier "
+					for (k=j+1;line[k]!='"';k++)
+						;//le deuxième "
+                                        addCode(tabInstructionNames[i].opcod);
+                                        for (l=j+1;l<k;l++)
+                                                addCode((int)line[l]);
+                                        addCode(0);
                                         break;
 			}
 		}
@@ -255,7 +313,7 @@ void decodeInstruction(char *line)
 // - sinon, il s'agit d'une instruction et on appelle decodeInstruction()
 
 // Q8 : Completer la fonction
-void parseAsm(FILE *fin)
+int parseAsm(FILE *fin)
 {
 	char line[100];
 
@@ -265,18 +323,31 @@ void parseAsm(FILE *fin)
 		//printf("%s",line);
 
 		/* if line contains ':', it's a label, and declare it as such*/
-		char *p=strstr(line,":");
-
-		// add code here
+		char *p=strstr(line,":");//c'est une etiquette
+		if (p!=NULL)
+		{
+		 	*p='\0';	
+			addLabel(line,currentInst);
+		}
+		else
+		{//ce n'est pas une etiquette
+			decodeInstruction(line);
+		}
 
 		fgets(line,100,fin);
 	}
+	return 0;
 }
 
 // Q9 : Ecrire des fonctions de mise au point permettant d'afficher
 // les etiquettes et les references
 void printLabels()
 {
+	int i;
+
+	for (i=0;i<currentLabel;i++){
+		printf("%d : %s\n",tabLabels[i].addr,tabLabels[i].label); 	
+		}
 }
 
 // Q10 : Completer la fonction suivante, qui permet de desassembler
@@ -288,7 +359,7 @@ void dumpBinaryCode()
 
 	while (pc!=currentInst)
 	{
-		printf("%5.5d: ",pc);
+		printf("%d: ",pc);
 		switch (codeSegment[pc])
 		{
                         case OP_ADD:
@@ -297,9 +368,110 @@ void dumpBinaryCode()
                         case OP_SUB:
 				printf("sub\n");
                                 pc++ ; break;
-
-			// add lots of code here
-
+                        case OP_MULT:
+				printf("mult\n");
+                                pc++ ; break;
+                        case OP_DIV:
+				printf("div\n");
+                                pc++ ; break;
+                        case OP_NEG:
+				printf("neg\n");
+                                pc++ ; break;
+                        case OP_AND:
+				printf("and\n");
+                                pc++ ; break;
+                        case OP_OR:
+				printf("or\n");
+                                pc++ ; break;
+                        case OP_NOT:
+				printf("not\n");
+                                pc++ ; break;
+                        case OP_EQ:
+				printf("eq\n");
+                                pc++ ; break;
+                        case OP_LS:
+				printf("ls\n");
+                                pc++ ; break;
+                        case OP_GT:
+				printf("gt\n");
+                                pc++ ; break;
+                        case OP_INC:
+				printf("inc %d\n",codeSegment[pc+1]);
+                                pc+=2 ; break;
+                        case OP_DEC:
+				printf("dec %d\n",codeSegment[pc+1]);
+                                pc+=2 ; break;
+                        case OP_PUSH:
+				printf("push %d\n",codeSegment[pc+1]);
+                                pc+=2; break;
+                        case OP_PUSHR:
+                                printf("pushr ");
+                                pos=pc+1;
+                                while (codeSegment[pos]!=0)
+                                {
+                                        printf("%c",(char)codeSegment[pos]);
+                                        pos++;
+                                }
+                                printf("\n");
+                                pc=pos+1;
+                                break;
+                        case OP_LIBP:
+				printf("libp %d\n",codeSegment[pc+1]);
+                                pc+=2; break;
+                        case OP_DUPL:
+				printf("dupl\n");
+                                pc++; break;
+                        case OP_CONT:
+				printf("cont\n");
+                                pc++; break;
+                        case OP_MOVE:
+				printf("move %d\n",codeSegment[pc+1]);
+                                pc+=2; break;
+                        case OP_COPY:
+				printf("copy %d\n",codeSegment[pc+1]);
+                                pc+=2; break;
+                        case OP_JF:
+				printf("jf %d\n",codeSegment[pc+1]);
+                                pc+=2;
+                                break;
+                        case OP_JL:
+				printf("jl %d\n",codeSegment[pc+1]);
+                                pc+=2;
+                                break;
+                        case OP_JG:
+				printf("jg %d\n",codeSegment[pc+1]);
+                                pc+=2;
+                                break;
+                        case OP_CALL:
+				printf("call %d\n",codeSegment[pc+1]);
+                                pc+=2;
+                                break;
+                        case OP_RET:
+				printf("ret\n");
+                                pc++; break;
+                        case OP_INPUT:
+				printf("input\n");
+                                pc++;break;
+                        case OP_OUTPUT:
+				printf("output\n");
+                                pc++;break;
+                        case OP_OUTCHAR:
+                                printf("outchar \"");
+                                pos=pc+1;
+                                while (codeSegment[pos]!=0)
+                                {
+                                        printf("%c",(char)codeSegment[pos]);
+                                        pos++;
+                                }
+                                printf("\"\n");
+                                pc=pos+1;
+                                break;
+                        case OP_SAVEBP:
+				printf("savebp\n");
+                                pc++;break;
+                        case OP_RSTRBP:
+				printf("rstrbp\n");
+                                pc++;break;
                         case OP_HALT:
 				printf("halt\n");
                                 pc++; break;
@@ -316,6 +488,11 @@ void dumpBinaryCode()
 // deux passes d'assemblage
 void generateBinary(FILE *fout)
 {
+	int i;
+
+	fprintf(fout,"%d\n",currentInst);//le numéro d'instruction actuelle
+	for (i=0;i<currentInst;i++)
+		fprintf(fout,"%d:%d\n",i,codeSegment[i]);
 }
 
 // Cadeau : On vous donne le programme principale. Je sais, je sais,
@@ -378,7 +555,7 @@ int main(int argc, char **argv)
 	dumpBinaryCode();
 	printf("no errors\n");
 
-	FILE *fout=fopen(argv[2],"w");
+	FILE *fout=fopen("ex3.bin","w");
 	if (fout==NULL)
 		printf("Error opening write file %s\n",argv[2]);
 	generateBinary(fout);
