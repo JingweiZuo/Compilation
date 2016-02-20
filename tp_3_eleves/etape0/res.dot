@@ -1,0 +1,15 @@
+digraph {
+	A000 [label="skip"]
+	A001 [label="skip"]
+	A002 [label=";"]
+	A003 [label="skip"]
+	A004 [label=";"]
+	A005 [label="skip"]
+	A006 [label=";"]
+	A006 -> A004
+	A006 -> A005
+	A004 -> A002
+	A004 -> A003
+	A002 -> A000
+	A002 -> A001
+}
