@@ -68,7 +68,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 15 "eise.y" /* yacc.c:1909  */
+#line 16 "eise.y" /* yacc.c:1909  */
 
 	float f;
 	char *s;

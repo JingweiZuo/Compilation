@@ -71,7 +71,7 @@ void generateAsmRec(nodeType *n, FILE *fout)
 	switch (n->type)
 	{
 		case typeNumeric:
-			fprintf(fout,"\tpushr %f\n",n->t_numeric.valeur);
+			fprintf(fout,"\tpush %f\n",n->t_numeric.valeur);
 		case typeOperator:
 			{
 				switch (n->t_oper.oper)
@@ -118,6 +118,7 @@ void generateAsm(nodeType *n, char *filename)
 {
 	FILE *fout;
 	fout=fopen(filename,"w");
+	fprintf(fout,"Debut\n");
 	generateAsmRec(n,fout);
 	fprintf(fout,"\thalt\n");
 	fprintf(fout,"\tend\n");

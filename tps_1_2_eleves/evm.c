@@ -146,8 +146,8 @@ void run()
 				pc++ ; break;
 
 			case OP_CONT:
-			pile[++sp] = pile[(int)pile[sp]];
-				 pc++ ; break;
+			pile[sp] = pile[(int)pile[sp]];
+				sp-- ; pc++ ; break;
 
 			case OP_JP:
 				pc = codeSegment[pc+1];

@@ -1,7 +1,8 @@
-	pushr	1.230000
-	pushr	4.560000
+Debut
+	push 1.230000
+	push 4.560000
 	add
-	pushr	7.890000
+	push 7.890000
 	add
 	output
 	halt
