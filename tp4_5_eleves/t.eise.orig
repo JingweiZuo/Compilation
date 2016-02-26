@@ -1,0 +1,16 @@
+program factorielle;
+
+var numeric : v;
+
+numeric function fact(numeric : n);
+begin
+        if n<2 then
+                return 1
+        else
+                return n*fact(n-1);
+end;
+
+begin
+        v=fact(4);
+end.
+

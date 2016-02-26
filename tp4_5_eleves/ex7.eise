@@ -1,0 +1,13 @@
+program ex2;
+
+function f2(p, o);
+var m,n;
+begin
+	m=10;
+	n=2;
+        return m+n+p+o;
+end;
+
+begin
+	write f2(2,4);
+end.

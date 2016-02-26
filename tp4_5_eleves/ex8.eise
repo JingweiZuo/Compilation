@@ -1,0 +1,13 @@
+program ex2;
+
+function fact(n);
+begin
+	if (n==1) then
+		return 1
+	else
+        	return n*fact(n-1);
+end;
+
+begin
+	write fact(5);
+end.

@@ -1,0 +1,13 @@
+program factorielle;
+
+var numeric : v;
+
+numeric function f(numeric : n);
+begin
+	return 1;
+end;
+
+begin
+        v=fact(4);
+end.
+

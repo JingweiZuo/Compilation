@@ -1,0 +1,9 @@
+Le TP commence avec la lecture du fichier eise.y, et la comprehension
+du mecanisme de factoristaion des regles et de l'utilisation
+d'une variabe globale (typeDeclaration) qui change de valeur
+lors de l'analyse syntaxique.
+
+Il se poursuit ensuite par l'amelioration du fichier symboles.c,
+permettant de gerer la table des symboles.
+
+Enfin, c'est le fichier ast.c qui doit etre modifie.

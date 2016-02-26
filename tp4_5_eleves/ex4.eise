@@ -1,0 +1,11 @@
+program ex2;
+
+var numeric : a, b, c, d;
+
+begin
+	a=0;
+	if a<10 then 
+		write 1
+	else
+		write 0;
+end.

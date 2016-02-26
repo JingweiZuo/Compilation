@@ -1,0 +1,15 @@
+program ex2;
+
+var numeric : a, b, c, d;
+
+begin
+	a=0;
+	while a < 20 do
+		begin
+			if a<10 then 
+				write 1
+			else
+				write 0;
+			a=a+1;
+	end;
+end.

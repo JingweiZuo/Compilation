@@ -1,0 +1,21 @@
+program ex2;
+
+var numeric : a, b, c, d;
+
+numeric function f1(numeric : var n);
+var numeric : n1, n2;
+begin
+	return n+100;
+end;
+
+begin
+	a=0;
+	while a < 20 do
+		begin
+			if a<10 then 
+				write 1
+			else
+				write 0;
+			a=a+1;
+	end;
+end.

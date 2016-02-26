@@ -1,0 +1,12 @@
+program ex2;
+
+var numeric : a, b, c, d;
+
+begin
+	a=0;
+	while a<10 do
+		begin
+			write a;
+			a=a+1;
+		end;
+end.
