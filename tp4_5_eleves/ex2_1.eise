@@ -3,9 +3,9 @@ program ex2;
 var a, b, c;
 
 begin
-	a=1;
-	b=a+1;
-	c=b+1;
+	a=3;
+	b=a+5;
+	c=b+7;
 	write a;
 	write b;
 	write c;

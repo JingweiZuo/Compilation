@@ -1,7 +1,0 @@
-program Jingwei;
-
-var a,b,c;
-
-begin
-	write 1;
-end.

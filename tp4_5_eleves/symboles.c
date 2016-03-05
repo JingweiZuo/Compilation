@@ -16,27 +16,31 @@ void reset_index_table_nbre_variables(int func)
 void init_table_symboles()
 {
 	// Question 1) Ajouter le code necessaire pour initialiser la table des symboles
-	int i;
-	for(i=0; i<NBRE_FONCTIONS_MAX; i++){
+	int i = 0;
+	for(i = 0; i < NBRE_FONCTIONS_MAX; i++){
 		table_nbre_variables[i] = 0;
-		table_fonctions[i] = 0;
+		table_fonctions[i] = -1; // est sujet a modification
 		table_nbre_variables_globales[i] = 0;
 		table_nbre_variables_locales[i] = 0;
 		table_nbre_formels[i] = 0;
 	}
+	currentFunction = 0;
+	
 }
 
 int est_deja_declare(int func, char *ident)
 {
 	// Question 2) Ajouter le code necessaires
-	int i;
-	for (i; i<table_nbre_variables[func]; i++){
-		if(table_ident_fonctions[func][i].ident != NULL){
-			if(!strcmp(table_ident_fonctions[func][i].ident, ident)){
-				return 0;//déjà déclaré
-			}
+	int j;
+	for(j = 0; j < NBRE_IDENT_MAX; j++){
+		if (table_ident_fonctions[func][j].ident != NULL)
+		{
+		if((strcmp(table_ident_fonctions[func][j].ident,ident) == 0)){
+			return	j;
 		}
+		}	
 	}
+
 	return -1;
 }
 
@@ -69,11 +73,13 @@ void print_table_fonctions()
 void ajouter_variable(int func, char *ident, int typv)
 {
 	// Question 3) Ajouter le code necessaire
-	int nbre = table_nbre_variables[func];
-	table_ident_fonctions[func][nbre].funcNum = func ;
-	table_ident_fonctions[func][nbre].ident = ident ;
-	table_ident_fonctions[func][nbre].typv = typv ;
-	table_nbre_variables[func]++;
+	int indice = table_nbre_variables[func];
+
+	table_ident_fonctions[func][indice].typv = typv;
+	table_ident_fonctions[func][indice].funcNum = func;
+	table_ident_fonctions[func][indice].ident = ident;
+	table_nbre_variables[func] = indice + 1;
+
 }
 
 void ajouter_table_fonctions(int index,int funcNum)
@@ -89,7 +95,8 @@ void declarer_variable(int func, char *ident, int typv)
 		printf("identificateur %s deja declare\n",ident);
 		exit(1);
 	}
-	printf("identificateur %s nouveau declare\n",ident);
+else
+		printf("identificateur %s nouveau\n",ident);
 	ajouter_variable(func, ident, typv);
 }
 

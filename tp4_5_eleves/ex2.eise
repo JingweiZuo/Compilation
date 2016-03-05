@@ -3,7 +3,7 @@ program ex2;
 var a, b, c;
 
 begin
-	a=1;
+	a=14;
 	b=a+1;
 	c=b+1;
 	write a;

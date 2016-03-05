@@ -85,10 +85,11 @@ void generateAsmRec(nodeType *n, FILE *fout)
 				{
 					case OPER_ASSIGN:
                                                 {
-							// Question 4) ajouter le code necessaire
-							generateAsmExpression(n->t_oper.op[0],fout);
-							generateAsmExpression(n->t_oper.op[1],fout);
-							fprintf(fout,"\tmove\n");
+							
+						// Question 4) ajouter le code necessaire
+						fprintf(fout,"\tpush\t%d \n",n->t_oper.op[0]->t_identifier.index); 			
+						generateAsmExpression(n->t_oper.op[1],fout);
+						fprintf(fout,"\tmove\t1\n"); 
                                                 }
 						break;
 					case OPER_SEQUENCE:
@@ -102,8 +103,8 @@ void generateAsmRec(nodeType *n, FILE *fout)
 					case OPER_SKIP:
 						break;
 					case OPER_RESERVE_SPACE:
-
-						// Question 13) Ajouter le code necessaire
+						fprintf(fout,"\tinc\t%d \n",table_nbre_variables[0]);
+						fprintf(fout,"\tjp\tmain\n");
 
 						break;
 					case OPER_MAIN:
@@ -127,7 +128,10 @@ void generateAsmRec(nodeType *n, FILE *fout)
 					case OPER_WHILE:
 
 							// Question 6) ajouter le code necessaire
-
+						fprintf(fout,"jf:\n");
+						generateAsmExpression(n->t_oper.op[0], fout);
+						fprintf(fout,"jf:\n");
+						generateAsmRec(n->t_oper.op[1], fout);
 						break;
 					case OPER_IF:
 
@@ -155,13 +159,19 @@ void generateAsmExpression(nodeType *n, FILE *fout)
                 case typeNumeric:
                         {
                                 fprintf(fout,"\tpushr\t%f\n",n->t_numeric.valeur);
+
                         }
                         break;
                 case typeIdentifier:
                         {
+				
 				// Question 5) Ajouter le code necessaire
-				fprintf(fout,"\t%s ",p->t_identifier.ident);
+                                fprintf(fout,"\tpush\t%d\n",n->t_identifier.index);
 
+				fprintf(fout,"\tcopy\t1\n");
+				
+
+				//fprintf(fout,"\tinc\t1\n");
 			}
                         break;
                 case typeOperator:

@@ -1,6 +1,6 @@
 program ex2;
 
-var numeric : a, b, c, d;
+var : a, b, c, d;
 
 begin
 	a=0;

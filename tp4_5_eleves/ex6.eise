@@ -3,7 +3,7 @@ program ex2;
 var numeric : a, b, c, d;
 
 numeric function f1(numeric : var n);
-var numeric : n1, n2;
+var  : n1, n2;
 begin
 	return n+100;
 end;

@@ -1922,6 +1922,6 @@ int main(void) {
 	//printf("generateDigraph\n");
 	//generateDigraph(programRoot);
 	//printf("generateAsm\n");
-	//generateAsm(programRoot,"res.asm");
+	generateAsm(programRoot,"res.asm");
     	return 0;
 }
